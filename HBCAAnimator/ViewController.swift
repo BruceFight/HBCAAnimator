@@ -43,7 +43,7 @@ import UIKit
  */
 
 class ViewController: UIViewController ,CAAnimationDelegate ,UICollectionViewDelegate ,UICollectionViewDataSource {
-    
+    fileprivate var animImages : [UIImage] = [#imageLiteral(resourceName: "lufei1"),#imageLiteral(resourceName: "lufei2"),#imageLiteral(resourceName: "lufei3"),#imageLiteral(resourceName: "lufei4"),#imageLiteral(resourceName: "lufei5"),#imageLiteral(resourceName: "lufei6"),#imageLiteral(resourceName: "lufei7"),#imageLiteral(resourceName: "lufei8"),#imageLiteral(resourceName: "lufei9"),#imageLiteral(resourceName: "lufei10")]
     fileprivate var tree = UIImageView()
     fileprivate var mainCollectionView : UICollectionView?
     override func viewDidLoad() {
@@ -61,12 +61,14 @@ class ViewController: UIViewController ,CAAnimationDelegate ,UICollectionViewDel
             view.addSubview(collection)
         }
         
+        /*
         tree.frame = CGRect.init(x: 0, y: 100, width: 100, height: 100)
         tree.image = #imageLiteral(resourceName: "lufei6")
         let manager = HBCAManager()
         manager.params = KeyFrameParams.init(values: [0.2,-0.5,0.5,-0.2], duration: 3, autoreverses: true, max: .infinity, beginTime: CACurrentMediaTime(), anchorType: .bottomCenter, position: CGPoint.init(x: tree.center.x, y: tree.frame.maxY), timing: CAMediaTimingFunction.init(name: kCAMediaTimingFunctionEaseInEaseOut))
         manager.HBCAAnimate(keyType: CARotate.z, caType: CAType.keyFrame, layer: tree.layer)
-        view.addSubview(tree)
+        //view.addSubview(tree)
+         */
     }
     
     override func didReceiveMemoryWarning() {
@@ -81,12 +83,14 @@ extension ViewController {
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 10
+        return animImages.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "CAShowCell", for: indexPath)
-        
-        return cell
+        if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "CAShowCell", for: indexPath) as? HBCAShowCell {
+            cell.image = animImages[indexPath.row]
+            return cell
+        }
+        return UICollectionViewCell()
     }
 }
