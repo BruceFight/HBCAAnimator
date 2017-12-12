@@ -8,7 +8,6 @@
 
 import UIKit
 /*
- #define angle2Radian(angle) ((angle)/180.0*M_PI)
  /// 形变 旋转,缩放,位移
  transform.rotation.x 围绕x轴翻转 参数：角度 angle2Radian(4)
  transform.rotation.y 围绕y轴翻转 参数：同上
@@ -58,7 +57,9 @@ class ViewController: UIViewController ,CAAnimationDelegate ,UICollectionViewDel
         #imageLiteral(resourceName: "lufei14"),
         #imageLiteral(resourceName: "lufei15"),
         #imageLiteral(resourceName: "lufei16"),
-        #imageLiteral(resourceName: "lufei11")]
+        #imageLiteral(resourceName: "lufei11")
+    ]
+    
     fileprivate var introduces : [String] = [
         "rotation",
         "scale",
@@ -77,6 +78,7 @@ class ViewController: UIViewController ,CAAnimationDelegate ,UICollectionViewDel
         "shadowOpacity",
         "shadowRadius"
     ]
+    
     fileprivate var valuesArray : [[Any]] = [
         [-CGFloat.pi/2,0,CGFloat.pi/2],
         [0.6,1,1.3],
@@ -95,30 +97,34 @@ class ViewController: UIViewController ,CAAnimationDelegate ,UICollectionViewDel
         [0.3,0.5,1],
         [5,15,30,60]
     ]
-    fileprivate var animTypes : [Any] = [CARotate.z,
-                                         CAScale.all,
-                                         CATranslation.x,
-                                         CAProperty.opacity,
-                                         CAProperty.backgroundColor,
-                                         CAProperty.cornerRadius,
-                                         CAProperty.borderWidth,
-                                         CAProperty.bounds,
-                                         CAProperty.contents,
-                                         CAProperty.contentsRect,
-                                         CAProperty.isHidden,
-                                         CAProperty.position,
-                                         CAProperty.shadowColor,
-                                         CAProperty.shadowOffset,
-                                         CAProperty.shadowOpacity,
-                                         CAProperty.shadowRadius
+    
+    fileprivate var animTypes : [Any] = [
+        CARotate.z,
+        CAScale.all,
+        CATranslation.x,
+        CAProperty.opacity,
+        CAProperty.backgroundColor,
+        CAProperty.cornerRadius,
+        CAProperty.borderWidth,
+        CAProperty.bounds,
+        CAProperty.contents,
+        CAProperty.contentsRect,
+        CAProperty.isHidden,
+        CAProperty.position,
+        CAProperty.shadowColor,
+        CAProperty.shadowOffset,
+        CAProperty.shadowOpacity,
+        CAProperty.shadowRadius
     ]
+    
     fileprivate var paramses = [Any]()
     
     fileprivate var tree = UIImageView()
+    
     fileprivate var mainCollectionView : UICollectionView?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         for i in 0 ..< valuesArray.count {
             let values = valuesArray[i]
             let param = KeyFrameParams()

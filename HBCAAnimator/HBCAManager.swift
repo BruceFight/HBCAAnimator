@@ -102,9 +102,9 @@ class BasicParams : Params {
     var to : CGFloat = 0
     /// default 3
     var duration : TimeInterval = 3
-    /// default 0
-    var max : Float = 0
-    /// default 0
+    /// default .infinity
+    var max : Float = .infinity
+    /// default CACurrentMediaTime()
     var beginTime : CFTimeInterval = CACurrentMediaTime()
     /// default kCAMediaTimingFunctionLinear
     var timing : CAMediaTimingFunction = CAMediaTimingFunction.init(name: kCAMediaTimingFunctionLinear)
@@ -138,9 +138,9 @@ class KeyFrameParams : Params {
     var duration : TimeInterval = 3
     /// default false
     var autoreverses : Bool = false
-    /// default 0
+    /// default .infinity
     var max : Float = .infinity
-    /// default 0
+    /// default CACurrentMediaTime()
     var beginTime : CFTimeInterval = CACurrentMediaTime()
     /// default .bottomCenter
     var anchorType : KLAnchorType = .bottomCenter
@@ -215,7 +215,7 @@ class HBCAManager: NSObject ,CAAnimationDelegate {
         if let param = params as? KeyFrameParams {
             let anim = CAKeyframeAnimation.init(keyPath: keyPath)
             if let values = param.values {
-                print("❤️ ❤️ --- > \(values)")
+                print("❤️ ---> \(values)")
                 anim.values = values
             }
             anim.duration = param.duration

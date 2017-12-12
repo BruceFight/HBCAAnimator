@@ -9,10 +9,10 @@
 import UIKit
 
 class HBCAShowCell: UICollectionViewCell {
-    var manager = HBCAManager()
+    fileprivate var manager = HBCAManager()
+    fileprivate var imageView = UIImageView()
+    fileprivate var showLabel = UILabel()
     
-    var imageView = UIImageView()
-    var showLabel = UILabel()
     var image = UIImage() {
         didSet{
             imageView.image = image
@@ -28,15 +28,18 @@ class HBCAShowCell: UICollectionViewCell {
                 imageView.layer.masksToBounds = false
             }
             
-            if introduce == "shadowRadius" {
+            if introduce == "shadowRadius" || introduce == "shadowOpacity" {
                 imageView.layer.shadowColor = UIColor.red.cgColor
             }else {
                 imageView.layer.shadowColor = UIColor.gray.cgColor
             }
         }
     }
+    
     var animType : Any?
+    
     var params : Params?
+    
     var type : CAType = .keyFrame {
         didSet{
             if let p = params as? KeyFrameParams {
