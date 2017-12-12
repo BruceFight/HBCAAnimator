@@ -46,46 +46,32 @@ enum CARotate : String {
     case x = "transform.rotation.x"
     case y = "transform.rotation.y"
     case z = "transform.rotation.z"
-    case all = "transform.rotation"
+    case all = "transform.rotation" //默认围绕z轴
 }
 
 enum CAScale : String {
     case x = "transform.scale.x"
     case y = "transform.scale.y"
     case z = "transform.scale.z"
-    case all = "transform.scale"
+    case all = "transform.scale" //所有方向缩放
 }
 
 enum CATranslation : String {
     case x = "transform.translation.x"
     case y = "transform.translation.y"
     case z = "transform.translation.z"
-    case all = "transform.translation"
+    case all = "transform.translation" //移动到点
 }
 
 enum CAProperty : String {
-    /*
-    case rotationX       = "transform.rotation.x"
-    case rotationY       = "transform.rotation.y"
-    case rotationZ       = "transform.rotation.z"
-    case rotationAll     = "transform.rotation"
-    case scaleX          = "transform.scale.x"
-    case scaleY          = "transform.scale.y"
-    case scaleZ          = "transform.scale.z"
-    case scaleAll        = "transform.scale"
-    case translationX    = "transform.translation.x"
-    case translationY    = "transform.translation.y"
-    case translationZ    = "transform.translation.z"
-    case translationAll  = "transform.translation"
-     */
     case opacity         = "opacity"
-    case backgroundColor = "backgroundColor"
+    case backgroundColor = "backgroundColor" //CGColor
     case cornerRadius    = "cornerRadius"
     case borderWidth     = "borderWidth"
     case bounds          = "bounds"
     case contents        = "contents"
     case contentsRect    = "contentsRect"
-    case hidden          = "hidden"
+    case isHidden        = "hidden"
     case position        = "position"
     case shadowColor     = "shadowColor"
     case shadowOffset    = "shadowOffset"
@@ -99,65 +85,83 @@ enum CAType {
     case basic
     case keyFrame
     case spring
-    
-    /*
-    var params : Params {
-        switch self {
-        case .group:
-            BasicParams.init(from: <#T##CGFloat#>, to: <#T##CGFloat#>, duration: <#T##TimeInterval#>, max: <#T##Float#>, beginTime: <#T##CFTimeInterval#>, timing: <#T##CAMediaTimingFunction#>)
-            break
-        case .property:
-            
-            break
-        case .basic:
-            
-            break
-        case .keyFrame:
-            
-            break
-        case .spring:
-            
-            break
-        }
-    }
-    */
 }
 
 protocol Params {
+    func caType() -> CAType
+}
+
+class BasicParams : Params {
+    func caType() -> CAType {
+        return .basic
+    }
     
-}
-struct BasicParams : Params {
+    /// default 0
     var from : CGFloat = 0
+    /// default 0
     var to : CGFloat = 0
+    /// default 3
     var duration : TimeInterval = 3
+    /// default 0
     var max : Float = 0
-    var beginTime : CFTimeInterval = 0
+    /// default 0
+    var beginTime : CFTimeInterval = CACurrentMediaTime()
+    /// default kCAMediaTimingFunctionLinear
     var timing : CAMediaTimingFunction = CAMediaTimingFunction.init(name: kCAMediaTimingFunctionLinear)
 }
 
-struct PropertyParams : Params {
+class PropertyParams : Params {
+    func caType() -> CAType {
+        return .property
+    }
+    
+    /// default false
     var isAdditive : Bool = false
+    /// default false
     var isCumulative : Bool = false
+    /// default nil
     var valueFunction : CAValueFunction? = nil
+    /// default true
     var isRemovedOnCompletion : Bool = true
+    /// default kCAMediaTimingFunctionLinear
     var timing : CAMediaTimingFunction = CAMediaTimingFunction.init(name: kCAMediaTimingFunctionLinear)
 }
 
-struct KeyFrameParams : Params {
-    var values : [CFloat] = [0]
+class KeyFrameParams : Params {
+    func caType() -> CAType {
+        return .keyFrame
+    }
+    
+    /// default [0]
+    var values : [Any]?
+    /// default 3
     var duration : TimeInterval = 3
+    /// default false
     var autoreverses : Bool = false
-    var max : Float = 0
-    var beginTime : CFTimeInterval = 0
+    /// default 0
+    var max : Float = .infinity
+    /// default 0
+    var beginTime : CFTimeInterval = CACurrentMediaTime()
+    /// default .bottomCenter
     var anchorType : KLAnchorType = .bottomCenter
+    /// default .zero
     var position : CGPoint = .zero
+    /// default .kCAMediaTimingFunctionLinear
     var timing : CAMediaTimingFunction = CAMediaTimingFunction.init(name: kCAMediaTimingFunctionLinear)
 }
 
-struct SpringParams : Params {
+class SpringParams : Params {
+    func caType() -> CAType {
+        return .spring
+    }
+    
+    /// default 1
     var mass : CGFloat = 1
+    /// default 10
     var damping : CGFloat = 10
+    /// default 100
     var stiffness : CGFloat = 100
+    /// default 0
     var initialVelocity : CGFloat = 0 //<正负取值>
 }
 
@@ -167,19 +171,13 @@ class HBCAManager: NSObject ,CAAnimationDelegate {
     weak fileprivate var hold = UIView()
     
     var params : Params?
+    var keyPath : String = ""
+    var layer : CALayer?
+    
     /** basic type
      */
     func basicAnimate(keyPath:String,
-                      layer:CALayer
-                      /*
-                      from:CGPoint,
-                      to:CGPoint,
-                      duration:TimeInterval = 3,
-                      max:Float,
-                      beginTime:CFTimeInterval,
-                      timing:CAMediaTimingFunction = CAMediaTimingFunction.init(name: kCAMediaTimingFunctionLinear)
-                     */
-                     ) -> () {
+                      layer:CALayer) -> () {
         if let param = params as? BasicParams {
             let anim = CABasicAnimation.init(keyPath: keyPath)
             anim.fromValue = param.from
@@ -196,14 +194,7 @@ class HBCAManager: NSObject ,CAAnimationDelegate {
     /** property type
      */
     func propertyAnimate(keyPath:String,
-                         layer:CALayer
-        /*
-                         isAdditive:Bool,
-                         isCumulative:Bool,
-                         valueFunction:CAValueFunction? = nil,
-                         isRemovedOnCompletion:Bool,
-                         timing:CAMediaTimingFunction = CAMediaTimingFunction.init(name: kCAMediaTimingFunctionLinear)*/
-                        ) -> () {
+                         layer:CALayer) -> () {
         if let param = params as? PropertyParams {
             let anim = CAPropertyAnimation.init(keyPath: keyPath)
             anim.isAdditive = param.isAdditive
@@ -217,23 +208,16 @@ class HBCAManager: NSObject ,CAAnimationDelegate {
         }
     }
     
-    /** property type
+    /** keyFrame type
      */
     func keyFrameAnimate(keyPath:String,
-                        layer:CALayer
-                        /*
-                        values:[CGFloat],
-                        duration:TimeInterval = 3,
-                        autoreverses:Bool,
-                        max:Float,
-                        beginTime:CFTimeInterval,
-                        anchorType:KLAnchorType = .bottomCenter,
-                        position:CGPoint,
-                        timing:CAMediaTimingFunction = CAMediaTimingFunction.init(name: kCAMediaTimingFunctionLinear)*/
-                        ) -> () {
+                        layer:CALayer) -> () {
         if let param = params as? KeyFrameParams {
             let anim = CAKeyframeAnimation.init(keyPath: keyPath)
-            anim.values = param.values
+            if let values = param.values {
+                print("❤️ ❤️ --- > \(values)")
+                anim.values = values
+            }
             anim.duration = param.duration
             anim.autoreverses = param.autoreverses
             anim.repeatCount = param.max
@@ -249,26 +233,19 @@ class HBCAManager: NSObject ,CAAnimationDelegate {
     /** spring type
      */
     func springAnimate(keyPath:String,
-                       layer:CALayer
-                        /*
-                       mass:CGFloat,
-                       damping:CGFloat,
-                       stiffness:CGFloat,
-                       initialVelocity:CGFloat*/
-                       ) -> () {
+                       layer:CALayer) -> () {
         if let param = params as? SpringParams {
             let anim = CASpringAnimation.init(keyPath: keyPath)
             anim.mass = param.mass
             anim.damping = param.damping
             anim.stiffness = param.stiffness
             anim.initialVelocity = param.initialVelocity
-            //anim.settlingDuration = settlingDuration
             layer.add(anim, forKey: "\(self)\(keyPath)")
         }
     }
     
     func HBCAAnimate<T>(keyType:T?,caType:CAType,layer:CALayer) -> () {
-        var keyPath : String = ""
+        self.layer = layer
         if let realType = keyType as? CARotate {
             keyPath = realType.rawValue
         }else if let realType = keyType as? CAScale {

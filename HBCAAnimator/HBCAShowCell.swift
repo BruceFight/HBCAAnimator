@@ -9,6 +9,8 @@
 import UIKit
 
 class HBCAShowCell: UICollectionViewCell {
+    var manager = HBCAManager()
+    
     var imageView = UIImageView()
     var showLabel = UILabel()
     var image = UIImage() {
@@ -17,8 +19,46 @@ class HBCAShowCell: UICollectionViewCell {
         }
     }
     
+    var introduce : String = "Introduce" {
+        didSet{
+            showLabel.text = introduce
+            if introduce == "cornerRadius" {
+                imageView.layer.masksToBounds = true
+            }else {
+                imageView.layer.masksToBounds = false
+            }
+            
+            if introduce == "shadowRadius" {
+                imageView.layer.shadowColor = UIColor.red.cgColor
+            }else {
+                imageView.layer.shadowColor = UIColor.gray.cgColor
+            }
+        }
+    }
+    var animType : Any?
+    var params : Params?
+    var type : CAType = .keyFrame {
+        didSet{
+            if let p = params as? KeyFrameParams {
+                p.position = CGPoint.init(x: imageView.center.x, y: imageView.frame.maxY)
+                manager.params = p
+                manager.HBCAAnimate(keyType: animType, caType: type, layer: imageView.layer)
+            }
+        }
+    }
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        imageView.layer.removeAllAnimations()
+    }
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
+        imageView.layer.cornerRadius = 10 //0
+        imageView.layer.shadowColor = UIColor.gray.cgColor
+        imageView.layer.shadowOffset = CGSize.init(width: 0, height: 4)
+        imageView.layer.shadowOpacity = 0.5 //[0...1]
+        imageView.layer.shadowRadius = 5 //3
         addSubview(imageView)
         showLabel.textAlignment = .center
         showLabel.text = "Introduce"
