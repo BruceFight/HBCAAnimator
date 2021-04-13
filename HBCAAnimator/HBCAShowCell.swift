@@ -9,9 +9,10 @@
 import UIKit
 
 class HBCAShowCell: UICollectionViewCell {
-    fileprivate var manager = HBCAManager()
-    fileprivate var imageView = UIImageView()
-    fileprivate var showLabel = UILabel()
+    
+    private var manager = HBCAManager()
+    private var imageView = UIImageView()
+    private var showLabel = UILabel()
     
     var image = UIImage() {
         didSet{
@@ -19,7 +20,7 @@ class HBCAShowCell: UICollectionViewCell {
         }
     }
     
-    var introduce : String = "Introduce" {
+    var introduce: String = "Introduce" {
         didSet{
             showLabel.text = introduce
             if introduce == "cornerRadius" {
@@ -36,11 +37,11 @@ class HBCAShowCell: UICollectionViewCell {
         }
     }
     
-    var animType : Any?
+    var animType: Any?
     
-    var params : Params?
+    var params: Params?
     
-    var type : CAType = .keyFrame {
+    var type: CAType = .keyFrame {
         didSet{
             if let p = params as? KeyFrameParams {
                 p.position = CGPoint.init(x: imageView.center.x, y: imageView.frame.maxY)
@@ -72,7 +73,7 @@ class HBCAShowCell: UICollectionViewCell {
     
     override func layoutSubviews() {
         super.layoutSubviews()
-        let imageWidth : CGFloat = bounds.width * 0.7
+        let imageWidth: CGFloat = bounds.width * 0.7
         imageView.frame = CGRect.init(x: (bounds.width - imageWidth) / 2, y: 0, width: imageWidth, height: imageWidth)
         showLabel.frame = CGRect.init(x: 0, y: imageView.frame.maxY, width: bounds.width, height: bounds.height * 0.3)
     }
@@ -80,4 +81,5 @@ class HBCAShowCell: UICollectionViewCell {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
 }

@@ -41,7 +41,7 @@ import UIKit
  */
 
 class ViewController: UIViewController ,CAAnimationDelegate ,UICollectionViewDelegate ,UICollectionViewDataSource {
-    fileprivate var animImages : [UIImage] = [
+    private var animImages: [UIImage] = [
         #imageLiteral(resourceName: "lufei6"),
         #imageLiteral(resourceName: "lufei2"),
         #imageLiteral(resourceName: "lufei8"),
@@ -60,7 +60,7 @@ class ViewController: UIViewController ,CAAnimationDelegate ,UICollectionViewDel
         #imageLiteral(resourceName: "lufei11")
     ]
     
-    fileprivate var introduces : [String] = [
+    private var introduces: [String] = [
         "rotation",
         "scale",
         "translation",
@@ -79,7 +79,7 @@ class ViewController: UIViewController ,CAAnimationDelegate ,UICollectionViewDel
         "shadowRadius"
     ]
     
-    fileprivate var valuesArray : [[Any]] = [
+    private var valuesArray: [[Any]] = [
         [-CGFloat.pi/2,0,CGFloat.pi/2],
         [0.6,1,1.3],
         [-10,0,10],
@@ -98,7 +98,7 @@ class ViewController: UIViewController ,CAAnimationDelegate ,UICollectionViewDel
         [5,15,30,60]
     ]
     
-    fileprivate var animTypes : [Any] = [
+    private var animTypes: [CAAnimationTypeProtocol] = [
         CARotate.z,
         CAScale.all,
         CATranslation.x,
@@ -117,11 +117,11 @@ class ViewController: UIViewController ,CAAnimationDelegate ,UICollectionViewDel
         CAProperty.shadowRadius
     ]
     
-    fileprivate var paramses = [Any]()
+    private var paramses = [Any]()
     
-    fileprivate var tree = UIImageView()
+    private var tree = UIImageView()
     
-    fileprivate var mainCollectionView : UICollectionView?
+    private var mainCollectionView: UICollectionView?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -153,6 +153,7 @@ class ViewController: UIViewController ,CAAnimationDelegate ,UICollectionViewDel
 }
 
 extension ViewController {
+    
     func numberOfSections(in collectionView: UICollectionView) -> Int {
         return 1
     }
@@ -162,7 +163,7 @@ extension ViewController {
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        var resultCell : HBCAShowCell?
+        var resultCell: HBCAShowCell?
         if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "CAShowCell", for: indexPath) as? HBCAShowCell {
             resultCell = cell
         }
@@ -179,4 +180,5 @@ extension ViewController {
             return UICollectionViewCell()
         }
     }
+    
 }

@@ -7,6 +7,7 @@
 //
 
 import UIKit
+
 enum KLAnchorType {
     case topLeft
     case topCenter
@@ -18,7 +19,7 @@ enum KLAnchorType {
     case bottomCenter
     case bottomRight
     
-    var point : CGPoint {
+    var point: CGPoint {
         switch self {
         case .topLeft:
             return CGPoint.init(x: 0, y: 0)
@@ -42,28 +43,32 @@ enum KLAnchorType {
     }
 }
 
-enum CARotate : String {
+protocol CAAnimationTypeProtocol {
+    
+}
+
+enum CARotate: String, CAAnimationTypeProtocol {
     case x = "transform.rotation.x"
     case y = "transform.rotation.y"
     case z = "transform.rotation.z"
     case all = "transform.rotation" //默认围绕z轴
 }
 
-enum CAScale : String {
+enum CAScale: String, CAAnimationTypeProtocol {
     case x = "transform.scale.x"
     case y = "transform.scale.y"
     case z = "transform.scale.z"
     case all = "transform.scale" //所有方向缩放
 }
 
-enum CATranslation : String {
+enum CATranslation: String, CAAnimationTypeProtocol {
     case x = "transform.translation.x"
     case y = "transform.translation.y"
     case z = "transform.translation.z"
     case all = "transform.translation" //移动到点
 }
 
-enum CAProperty : String {
+enum CAProperty: String, CAAnimationTypeProtocol {
     case opacity         = "opacity"
     case backgroundColor = "backgroundColor" //CGColor
     case cornerRadius    = "cornerRadius"
@@ -91,88 +96,89 @@ protocol Params {
     func caType() -> CAType
 }
 
-class BasicParams : Params {
+class BasicParams: Params {
     func caType() -> CAType {
         return .basic
     }
     
     /// default 0
-    var from : CGFloat = 0
+    var from: CGFloat = 0
     /// default 0
-    var to : CGFloat = 0
+    var to: CGFloat = 0
     /// default 3
-    var duration : TimeInterval = 3
+    var duration: TimeInterval = 3
     /// default .infinity
-    var max : Float = .infinity
+    var max: Float = .infinity
     /// default CACurrentMediaTime()
-    var beginTime : CFTimeInterval = CACurrentMediaTime()
+    var beginTime: CFTimeInterval = CACurrentMediaTime()
     /// default kCAMediaTimingFunctionLinear
-    var timing : CAMediaTimingFunction = CAMediaTimingFunction.init(name: kCAMediaTimingFunctionLinear)
+    var timing: CAMediaTimingFunction = CAMediaTimingFunction.init(name: kCAMediaTimingFunctionLinear)
 }
 
-class PropertyParams : Params {
+class PropertyParams: Params {
     func caType() -> CAType {
         return .property
     }
     
     /// default false
-    var isAdditive : Bool = false
+    var isAdditive: Bool = false
     /// default false
-    var isCumulative : Bool = false
+    var isCumulative: Bool = false
     /// default nil
-    var valueFunction : CAValueFunction? = nil
+    var valueFunction: CAValueFunction? = nil
     /// default true
-    var isRemovedOnCompletion : Bool = true
+    var isRemovedOnCompletion: Bool = true
     /// default kCAMediaTimingFunctionLinear
-    var timing : CAMediaTimingFunction = CAMediaTimingFunction.init(name: kCAMediaTimingFunctionLinear)
+    var timing: CAMediaTimingFunction = CAMediaTimingFunction.init(name: kCAMediaTimingFunctionLinear)
 }
 
-class KeyFrameParams : Params {
+class KeyFrameParams: Params {
     func caType() -> CAType {
         return .keyFrame
     }
     
     /// default [0]
-    var values : [Any]?
+    var values: [Any]?
     /// default 3
-    var duration : TimeInterval = 3
+    var duration: TimeInterval = 3
     /// default false
-    var autoreverses : Bool = false
+    var autoreverses: Bool = false
     /// default .infinity
-    var max : Float = .infinity
+    var max: Float = .infinity
     /// default CACurrentMediaTime()
-    var beginTime : CFTimeInterval = CACurrentMediaTime()
+    var beginTime: CFTimeInterval = CACurrentMediaTime()
     /// default .bottomCenter
-    var anchorType : KLAnchorType = .bottomCenter
+    var anchorType: KLAnchorType = .bottomCenter
     /// default .zero
-    var position : CGPoint = .zero
+    var position: CGPoint = .zero
     /// default .kCAMediaTimingFunctionLinear
-    var timing : CAMediaTimingFunction = CAMediaTimingFunction.init(name: kCAMediaTimingFunctionLinear)
+    var timing: CAMediaTimingFunction = CAMediaTimingFunction.init(name: kCAMediaTimingFunctionLinear)
 }
 
-class SpringParams : Params {
+class SpringParams: Params {
     func caType() -> CAType {
         return .spring
     }
     
     /// default 1
-    var mass : CGFloat = 1
+    var mass: CGFloat = 1
     /// default 10
-    var damping : CGFloat = 10
+    var damping: CGFloat = 10
     /// default 100
-    var stiffness : CGFloat = 100
+    var stiffness: CGFloat = 100
     /// default 0
-    var initialVelocity : CGFloat = 0 //<正负取值>
+    var initialVelocity: CGFloat = 0 //<正负取值>
 }
 
-class HBCAManager: NSObject ,CAAnimationDelegate {
-    open var animBeginHandler : ((_ anim: CAAnimation) -> ())?
-    open var animEndHandler : ((_ anim: CAAnimation,_ flag: Bool,_ hold: UIView?) -> ())?
-    weak fileprivate var hold = UIView()
+class HBCAManager: NSObject, CAAnimationDelegate {
     
-    var params : Params?
-    var keyPath : String = ""
-    var layer : CALayer?
+    open var animBeginHandler: ((_ anim: CAAnimation) -> ())?
+    open var animEndHandler: ((_ anim: CAAnimation,_ flag: Bool,_ hold: UIView?) -> ())?
+    weak private var hold: UIView?
+    
+    var params: Params?
+    var keyPath: String = ""
+    var layer: CALayer?
     
     /** basic type
      */
@@ -273,6 +279,7 @@ class HBCAManager: NSObject ,CAAnimationDelegate {
             break
         }
     }
+    
 }
 
 extension HBCAManager {
